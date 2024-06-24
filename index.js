@@ -3,6 +3,9 @@ const app = express();
 
 const PORT = 3001;
 
+// Muista middleware!
+app.use(express.json());
+
 let numbers = [
     {
         id: 1,
@@ -53,6 +56,33 @@ app.delete('/api/persons/:id', (request, response) => {
 
     console.log('DELETE /api/persons/:id')
     response.status(204).end();
+});
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body;
+    console.log('body: ', body);
+
+    if (!body.name || !body.number) {
+        return response.status(400).json({
+            error: 'Nimi tai numero puuttuu'
+        });  
+    };
+
+    if (numbers.find(number => number.name === body.name)) { 
+        return response.status(400).json({
+            error: 'Nimi on jo listalla'
+        });  
+    };
+
+    const number = {
+        id: Math.floor(Math.random() * 10000),
+        name: body.name,
+        number: body.number
+    };
+
+    numbers = numbers.concat(number);
+
+    response.json(number);
 });
 
 app.listen(PORT, () => {
