@@ -7,7 +7,20 @@ const PORT = 3001;
 
 // Muista middleware!
 app.use(express.json());
-app.use(morgan('tiny'));
+morgan.token('post', (req, res) => {
+    return JSON.stringify(req.body)
+})
+app.use((req, res, next) => {
+    if (req.method === 'POST') {
+        morgan(':method :url :status :res[content-length] - :response-time ms :post')(req, res, next);
+    } else {
+        morgan('tiny')(req, res, next);
+    }
+});
+    
+    
+    
+//app.use(morgan('tiny'));
 
 let numbers = [
     {
@@ -33,7 +46,6 @@ let numbers = [
 ];
 
 app.get('/api/persons', (request, response) => {
-    console.log('GET /api/persons');
     response.json(numbers);
 });
 
@@ -54,10 +66,7 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number.parseInt(request.params.id);
-    console.log('id: ', id);
     numbers = numbers.filter(number => number.id !== id);
-
-    console.log('DELETE /api/persons/:id')
     response.status(204).end();
 });
 
