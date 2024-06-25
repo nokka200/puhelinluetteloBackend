@@ -4,7 +4,7 @@ const app = express();
 const cors = require('cors');
 
 
-const PORT = 3001;
+
 
 // Muista middleware!
 app.use(express.json());
@@ -98,6 +98,7 @@ app.post('/api/persons', (request, response) => {
     response.json(number);
 });
 
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
