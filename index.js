@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const cors = require('cors');
 
 
 const PORT = 3001;
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
         morgan('tiny')(req, res, next);
     }
 });
+app.use(cors());
     
     
     
