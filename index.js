@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
+const Phone = require('./models/phone');
 
 
 
@@ -19,9 +21,9 @@ app.use((req, res, next) => {
     }
 });
 app.use(cors());
-app.use(express.static('dist')); 
-    
-    
+app.use(express.static('dist'));
+
+
 //app.use(morgan('tiny'));
 
 let numbers = [
@@ -48,7 +50,9 @@ let numbers = [
 ];
 
 app.get('/api/persons', (request, response) => {
-    response.json(numbers);
+    Phone.find({}).then(person => {
+        response.json(person)
+    });
 });
 
 app.get('/info', (requests, response) => {
@@ -58,8 +62,8 @@ app.get('/info', (requests, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id = Number.parseInt(request.params.id);
     const number = numbers.find(number => number.id === id);
-    
-    if(number) {
+
+    if (number) {
         response.json(number);
     } else {
         response.status(404).end();
@@ -74,28 +78,20 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    debugger;
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: 'Nimi tai numero puuttuu'
-        });  
-    };
+    console.log('body', body);
 
-    if (numbers.find(number => number.name === body.name)) { 
-        return response.status(400).json({
-            error: 'Nimi on jo listalla'
-        });  
-    };
+    if (body.name === undefined) {
+        return response.status(400).json({ error: 'name missing' });
+    }
 
-    const number = {
-        id: Math.floor(Math.random() * 10000),
+    const phone = new Phone({
         name: body.name,
-        number: body.number
-    };
+        number: body.number,
+    });
 
-    numbers = numbers.concat(number);
-
-    response.json(number);
+    phone.save().then(savedPhone => {
+        response.json(savedPhone)
+    });
 });
 
 const PORT = process.env.PORT || 3001;
