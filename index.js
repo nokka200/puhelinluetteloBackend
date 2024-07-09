@@ -62,16 +62,16 @@ app.get('/info', (requests, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     Phone.findById(request.params.id)
-    .then(note => {
-      if (note) {
-        response.json(note)
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => {
-      next(error)
-    })
+        .then(note => {
+            if (note) {
+                response.json(note)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => {
+            next(error)
+        })
 });
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -99,6 +99,20 @@ app.post('/api/persons', (request, response) => {
         response.json(savedPhone)
     });
 });
+
+app.put('/api/notes/:id', (request, response, next) => {
+    const { name, number } = request.body
+
+    Phone.findByIdAndUpdate(
+        request.params.id,
+        { content, important },
+        { new: true, runValidators: true, context: 'query' }
+    )
+        .then(updatedNote => {
+            response.json(updatedNote)
+        })
+        .catch(error => next(error))
+})
 
 // middlewarea
 const unknownEndpoint = (request, response) => {
