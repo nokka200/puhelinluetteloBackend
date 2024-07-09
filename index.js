@@ -59,14 +59,17 @@ app.get('/info', (requests, response) => {
 });
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number.parseInt(request.params.id);
-    const number = numbers.find(number => number.id === id);
-
-    if (number) {
-        response.json(number);
-    } else {
-        response.status(404).end();
-    }
+    Phone.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      next(error)
+    })
 });
 
 app.delete('/api/persons/:id', (request, response, next) => {
