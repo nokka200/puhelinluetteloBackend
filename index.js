@@ -55,7 +55,9 @@ app.get('/api/persons', (request, response) => {
 });
 
 app.get('/info', (requests, response) => {
-    response.send(`<p>Phone has info for ${numbers.length} people</p>\n<p>${new Date()}</p>`)
+    Phone.find({}).then(person => {
+        response.send(`<p>Phone has info for ${person.length} people</p>\n<p>${new Date()}</p>`)
+    });
 });
 
 app.get('/api/persons/:id', (request, response) => {
