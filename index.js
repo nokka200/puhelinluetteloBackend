@@ -82,13 +82,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
         .catch(error => next(error))
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body;
     console.log('body', body);
-
-    if (body.name === undefined) {
-        return response.status(400).json({ error: 'name missing' });
-    }
 
     const phone = new Phone({
         name: body.name,
@@ -97,7 +93,10 @@ app.post('/api/persons', (request, response) => {
 
     phone.save().then(savedPhone => {
         response.json(savedPhone)
-    });
+    })
+        .catch(error => {
+            next(error)
+        })
 });
 
 app.put('/api/notes/:id', (request, response, next) => {
